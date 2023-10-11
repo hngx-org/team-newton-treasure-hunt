@@ -1,16 +1,19 @@
 package com.teamnewton.treasurehunt.ui.ar
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -20,66 +23,98 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.google.ar.core.Config
-import com.google.ar.core.TrackingState
 import com.teamnewton.treasurehunt.R
 import io.github.sceneview.ar.ARScene
-import io.github.sceneview.ar.ArSceneView
-import io.github.sceneview.ar.arcore.ArSession
 import io.github.sceneview.ar.node.ArModelNode
 import io.github.sceneview.ar.node.ArNode
 import io.github.sceneview.ar.node.PlacementMode
-import io.github.sceneview.math.Rotation
+
 
 @Composable
-fun ARScreen() {
+fun FullScreen(){
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Box(modifier = Modifier.fillMaxSize()){
+
+            val currentModel = remember {
+                mutableStateOf("gun")
+            }
+            ARScreen(model = currentModel.value)
+            Menu(modifier = Modifier.align(Alignment.BottomCenter),
+                onClick = {
+                    currentModel.value = it
+                })
+        }
+    }
+}
+@Composable
+fun ARScreen(model:String) {
     val nodes = remember { mutableStateListOf<ArNode>() }
-    val modalNodes = remember{
+    val modelNode = remember{
         mutableStateOf<ArNode?>(null)
     }
     val placeModelButton = remember {
         mutableStateOf(false)
     }
-    Box(modifier = Modifier.fillMaxSize()) {
+
+    Box(modifier = Modifier.fillMaxSize()){
         ARScene(
             modifier = Modifier.fillMaxSize(),
             nodes = nodes,
             planeRenderer = true,
             onCreate = { arSceneView ->
                 // Apply your configuration
-               // arSceneView.geospatialEnabled = true
+                // arSceneView.geospatialEnabled = true
                 arSceneView.lightEstimationMode = Config.LightEstimationMode.DISABLED
-                arSceneView.planeRenderer.isShadowReceiver =false
+                arSceneView.planeRenderer.isShadowReceiver = false
 
-                modalNodes.value = ArModelNode(arSceneView.engine,PlacementMode.INSTANT).apply {
+                modelNode.value = ArModelNode(arSceneView.engine, PlacementMode.INSTANT).apply {
                     loadModelGlbAsync(
-                        glbFileLocation ="models/bag.glb"
-                    ){
+                        glbFileLocation = "models/${model}.glb"
+                    ) {
 
                     }
                     onAnchorChanged = {
                         placeModelButton.value = !isAnchored
 
                     }
-                    onHitResult = { node, hitResult ->  
+                    onHitResult = { node, hitResult ->
                         placeModelButton.value = node.isTracking
                     }
-                    modalNodes.value?.let { nodes.add(it) }
                 }
+                modelNode.value?.let { nodes.add(it) }
 
+            },
+            onSessionCreate = {
+                planeRenderer.isVisible = false
             }
         )
 
-      if (placeModelButton.value)  {
-            Button(onClick = { modalNodes.value?.anchor }) {
+
+        if (placeModelButton.value) {
+            Button(onClick = { modelNode.value?.anchor },
+                modifier = Modifier.align(Alignment.Center
+
+                )) {
                 Text(text = "Place it")
             }
         }
     }
 
-}
+    LaunchedEffect(key1 = model ){
+        modelNode.value?.loadModelGlbAsync(
+            glbFileLocation = "models/${model}.glb"
+        )
+        Log.e("errorLoading", "ERROR LOADING MODEL")
+    }
+    }
+
+
 
 @Composable
-fun Menu(modifier: Modifier){
+fun Menu(modifier: Modifier, onClick: (String) -> Unit){
    val menuItems = listOf(
         "gun", "bag", "ring","sneakers"
     )
@@ -89,6 +124,7 @@ fun Menu(modifier: Modifier){
 
     fun updateCurrentIndex(offset :Int){
         currentIndex = (currentIndex +offset + menuItems.size) % menuItems.size
+        onClick(menuItems[currentIndex])
     }
 
     Row(modifier = modifier.fillMaxWidth(),

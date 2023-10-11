@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.teamnewton.treasurehunt.ui.ar.ARScreen
+import com.teamnewton.treasurehunt.ui.ar.FullScreen
 import com.teamnewton.treasurehunt.ui.theme.TreasureHuntTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
             TreasureHuntTheme {
                 // A surface container using the 'background' color from the theme
 
-                   ARScreen()
+                   FullScreen()
 
             }
         }
