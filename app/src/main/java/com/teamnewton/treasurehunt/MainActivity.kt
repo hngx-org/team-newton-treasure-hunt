@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.teamnewton.treasurehunt.ui.ar.ARScreen
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
 import com.teamnewton.treasurehunt.app.navigation.TreasureHuntAppNavHost
@@ -31,6 +32,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TreasureHuntTheme {
+                // A surface container using the 'background' color from the theme
+
+                   ARScreen()
+
                 TreasureHuntAppNavHost(
                     navController = rememberNavController(),
                     googleAuthUIClient = googleAuthUIClient)
