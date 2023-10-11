@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -22,11 +25,18 @@ android {
     }
 
     buildTypes {
+        debug {
+            val properties = Properties()
+            val fileInputStream = FileInputStream(project.rootProject.file("local.properties"))
+            properties.load(fileInputStream)
+            val geoApiKey = properties.getProperty("GEO_API_KEY")
+            buildConfigField(type = "String", name = "GEO_API_KEY", value = "\"$geoApiKey\"")
+        }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -39,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -67,4 +78,31 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+
+    //Compose Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.7.4")
+
+    //Lottie Animations
+    implementation("com.airbnb.android:lottie-compose:6.0.1")
+
+    // ARCore (Google Play Services for AR) library.
+    implementation ("com.google.ar:core:1.39.0")
+
+    // Obj - a simple Wavefront OBJ file loader
+    implementation ("de.javagl:obj:0.2.1")
+
+    //GooglePlay
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+
+    //Firebase
+    implementation ("com.google.firebase:firebase-auth-ktx:22.1.2")
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+
+    //Coil-Image Loading
+    implementation ("io.coil-kt:coil-compose:2.2.2")
 }
