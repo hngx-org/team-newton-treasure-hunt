@@ -9,11 +9,25 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.teamnewton.treasurehunt.ui.ar.ARScreen
-import com.teamnewton.treasurehunt.ui.theme.TreasureHuntTheme
+import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.auth.api.identity.Identity
+import com.teamnewton.treasurehunt.app.navigation.TreasureHuntAppNavHost
+import com.teamnewton.treasurehunt.app.theme.TreasureHuntTheme
+import com.teamnewton.treasurehunt.ui.onboarding.signup.GoogleAuthUIClient
 
 class MainActivity : ComponentActivity() {
+
+    private val googleAuthUIClient by lazy {
+        GoogleAuthUIClient(
+            context = applicationContext,
+            oneTapClient = Identity.getSignInClient(applicationContext)
+        )
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -22,23 +36,10 @@ class MainActivity : ComponentActivity() {
 
                    ARScreen()
 
+                TreasureHuntAppNavHost(
+                    navController = rememberNavController(),
+                    googleAuthUIClient = googleAuthUIClient)
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TreasureHuntTheme {
-        Greeting("Android")
     }
 }
