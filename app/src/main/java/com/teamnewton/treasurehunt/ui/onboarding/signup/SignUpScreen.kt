@@ -61,17 +61,16 @@ fun SignUpScreen(
     Scaffold(
         topBar = {
             Text(
+                modifier = modifier.padding(12.dp),
                 text = "Sign Up",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
         },
-        modifier = modifier.background(MaterialTheme.colorScheme.primary),
         content = { scaffoldPadding ->
             Column(
                 modifier = modifier
                     .padding(scaffoldPadding)
-                    .background(MaterialTheme.colorScheme.background)
                     .padding(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -83,21 +82,6 @@ fun SignUpScreen(
                             color = MaterialTheme.colorScheme.error
                         )
                     }
-
-                    OutlinedTextField(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        value = loginState.userFirstName,
-                        onValueChange = { updateState(loginState.copy(userFirstName = it)) },
-                        leadingIcon = {
-                            Icon(imageVector = Icons.Default.Person, contentDescription = "")
-                        },
-                        label = {
-                            Text(text = "Nickname")
-                        },
-                        isError = hasError
-                    )
 
                     OutlinedTextField(
                         modifier = modifier

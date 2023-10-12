@@ -10,5 +10,4 @@ data class LoginState(
     val isSuccessLogin: Boolean = false,
     val signUpError: String? = null,
     val loginError: String? = null,
-    val userFirstName: String = "",
 )

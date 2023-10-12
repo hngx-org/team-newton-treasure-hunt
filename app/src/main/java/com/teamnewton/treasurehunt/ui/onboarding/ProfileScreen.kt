@@ -30,6 +30,8 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.teamnewton.treasurehunt.R
 import com.teamnewton.treasurehunt.app.theme.PurpleGrey40
 import com.teamnewton.treasurehunt.ui.onboarding.login.LoginState
@@ -38,14 +40,13 @@ import com.teamnewton.treasurehunt.ui.onboarding.signup.SignInUserData
 @Composable
 fun ProfileViewScreen(
     modifier: Modifier = Modifier,
-    loginState: LoginState,
     onSignOut: () -> Unit,
 ) {
 
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(R.raw.hand_wave_animation)
     )
-    val firstName = loginState.userFirstName
+    val firstName = Firebase.auth.currentUser?.displayName?.substringBefore(' ') ?:""
 
 
     Scaffold(

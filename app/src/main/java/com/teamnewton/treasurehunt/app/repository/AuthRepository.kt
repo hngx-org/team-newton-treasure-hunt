@@ -1,5 +1,6 @@
 package com.teamnewton.treasurehunt.app.repository
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -10,7 +11,11 @@ import kotlinx.coroutines.withContext
 class AuthRepository {
     val currentUser: FirebaseUser? = Firebase.auth.currentUser
 
-    fun hasUser(): Boolean = Firebase.auth.currentUser != null
+    fun hasUser(): Boolean {
+        Log.i("AUTH REPO", "${Firebase.auth.currentUser != null}")
+        Log.i("AUTH REPO", "${Firebase.auth.currentUser}")
+        return Firebase.auth.currentUser != null
+    }
 
     fun getUserId(): String = Firebase.auth.currentUser?.uid.orEmpty()
 
