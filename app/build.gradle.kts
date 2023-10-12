@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id ("com.google.gms.google-services")
 }
 
 android {
@@ -70,4 +71,22 @@ dependencies {
 
     //SceneView Dependencies
     implementation ("io.github.sceneview:arsceneview:0.10.2")
+
+    //Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation ("com.google.firebase:firebase-auth-ktx:22.1.2")
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+
+    //Compose Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.7.4")
+
+    //Lottie Animations
+    implementation("com.airbnb.android:lottie-compose:6.0.1")
+
+    //GooglePlay
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+
 }

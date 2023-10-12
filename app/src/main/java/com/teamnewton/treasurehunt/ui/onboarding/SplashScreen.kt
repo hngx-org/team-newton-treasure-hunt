@@ -21,7 +21,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.teamnewton.treasurehunt.R
 import kotlinx.coroutines.delay
 
-private const val SPLASH_DURATION = 3000
+private const val SPLASH_DURATION = 5000
 
 @Composable
 fun SplashScreen(

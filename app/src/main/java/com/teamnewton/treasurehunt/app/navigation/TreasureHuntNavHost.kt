@@ -1,39 +1,32 @@
 package com.teamnewton.treasurehunt.app.navigation
 
-import android.app.Activity.RESULT_OK
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.teamnewton.treasurehunt.ui.ar.ARScreen
+import com.teamnewton.treasurehunt.ui.mainscreen.GameModeScreen
 import com.teamnewton.treasurehunt.ui.onboarding.ProfileViewScreen
 import com.teamnewton.treasurehunt.ui.onboarding.SplashScreen
 import com.teamnewton.treasurehunt.ui.onboarding.login.LoginScreen
-import com.teamnewton.treasurehunt.ui.onboarding.signup.GoogleAuthUIClient
-import com.teamnewton.treasurehunt.ui.onboarding.signup.SignInViewModel
+import com.teamnewton.treasurehunt.ui.onboarding.login.LoginViewModel
 import com.teamnewton.treasurehunt.ui.onboarding.signup.SignUpScreen
-import kotlinx.coroutines.launch
 
 @Composable
 fun TreasureHuntAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    googleAuthUIClient: GoogleAuthUIClient
+    loginViewModel: LoginViewModel,
 ) {
-    val scope = rememberCoroutineScope()
 
     NavHost(
         modifier = modifier.fillMaxSize(),
@@ -67,79 +60,109 @@ fun TreasureHuntAppNavHost(
                 )
             }
         ) {
-            LoginScreen()
-
-        }
-        composable(route = SignUpScreen.route) {
-            val viewModel = viewModel<SignInViewModel>()
-            val state by viewModel.state.collectAsState()
-
             val context = LocalContext.current
-            LaunchedEffect(key1 = Unit) {
-                if (googleAuthUIClient.getSignedInUser() != null) {
-                    navController.navigate("profile")
-                }
-            }
-
-            val launcher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartIntentSenderForResult(),
-                onResult = { result ->
-                    if (result.resultCode == RESULT_OK) {
-                        scope.launch {
-                            val signInResult = googleAuthUIClient.getSignInWithIntent(
-                                intent = result.data ?: return@launch
-                            )
-                            viewModel.onSignInResult(signInResult)
+            LoginScreen(
+                updateState = loginViewModel::updateLoginState,
+                onNavigateToGameMode = {
+                    Log.i("NAVHOST", "game")
+                    navController.navigate(GameModeScreen.route) {
+                        launchSingleTop = true
+                        popUpTo(route = SignInScreen.route) {
+                            inclusive = true
                         }
                     }
-                }
-            )
-
-            LaunchedEffect(key1 = state.isSignInSuccessful, block = {
-                if (state.isSignInSuccessful) {
-                    Toast.makeText(context, "SUCCESSFUL LOGIN", Toast.LENGTH_LONG)
-                        .show()
-                    navController.navigate(ProfileScreen.route)
-                    viewModel.resetState()
-                }
-            }
-            )
-
-            SignUpScreen(
-                state = state,
-                onSignInClick = {
-                    scope.launch {
-                        val signInIntentSender = googleAuthUIClient.signIn()
-                        launcher.launch(
-                            IntentSenderRequest.Builder(
-                                signInIntentSender ?: return@launch
-                            ).build()
-                        )
-                    }
-                }
-            )
-        }
-
-        composable(route = ProfileScreen.route) {
-            val context = LocalContext.current
-
-            googleAuthUIClient.getSignedInUser()?.let { userData ->
-                ProfileViewScreen(
-                    userData = userData,
-                    onSignOut = {
-                        scope.launch {
-                            googleAuthUIClient.signOut()
-                            Toast.makeText(
-                                context,
-                                "Signed out",
-                                Toast.LENGTH_LONG
-                            ).show()
-
-                            navController.navigate(SignUpScreen.route)
+                    //loginViewModel.resetState()
+                },
+                onNavigateToSignUp = {
+                    navController.navigate(SignUpScreen.route){
+                        launchSingleTop = true
+                        popUpTo(SignInScreen.route) {
+                            inclusive = true
                         }
                     }
+                },
+                logIn = { loginViewModel.loginUser(context) },
+                loginState = loginViewModel.loginState.collectAsState().value,
+                hasUser = loginViewModel.hasUser
+            )
+
+        }
+        composable(
+            route = SignUpScreen.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(700)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(700)
                 )
             }
+        ) {
+            val viewModel = viewModel<LoginViewModel>()
+            val state by viewModel.loginState.collectAsState()
+            val context = LocalContext.current
+
+            SignUpScreen(
+                onNavigateToLogin = { navController.navigate(SignInScreen.route) },
+                loginState = state,
+                signUp = { viewModel.createUser(context) },
+                updateState = viewModel::updateLoginState,
+                hasUser = viewModel.hasUser
+            )
+        }
+
+        composable(
+            route = ProfileScreen.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(700)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(700)
+                )
+            }
+        ) {
+            ProfileViewScreen(
+                loginState = loginViewModel.loginState.collectAsState().value,
+                onSignOut = {
+                    loginViewModel.signOut()
+                    navController.navigate(SignInScreen.route)
+                }
+            )
+
+        }
+
+        composable(route = ARScreen.route) {
+            ARScreen()
+        }
+        composable(
+            route = GameModeScreen.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(700)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(700)
+                )
+            }) {
+            GameModeScreen(
+                hasUser = loginViewModel.hasUser,
+                navToLoginPage = { navController.navigate(SignInScreen.route) },
+                onViewProfile = { navController.navigate(ProfileScreen.route) }
+
+            )
         }
     }
 }

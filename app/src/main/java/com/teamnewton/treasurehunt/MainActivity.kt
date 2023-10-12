@@ -11,34 +11,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.teamnewton.treasurehunt.ui.ar.ARScreen
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
 import com.teamnewton.treasurehunt.app.navigation.TreasureHuntAppNavHost
 import com.teamnewton.treasurehunt.app.theme.TreasureHuntTheme
+import com.teamnewton.treasurehunt.ui.onboarding.login.LoginViewModel
 import com.teamnewton.treasurehunt.ui.onboarding.signup.GoogleAuthUIClient
 
 class MainActivity : ComponentActivity() {
-
-    private val googleAuthUIClient by lazy {
-        GoogleAuthUIClient(
-            context = applicationContext,
-            oneTapClient = Identity.getSignInClient(applicationContext)
-        )
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             TreasureHuntTheme {
-                // A surface container using the 'background' color from the theme
-
-                   ARScreen()
-
+                val viewModel = viewModel<LoginViewModel>()
                 TreasureHuntAppNavHost(
                     navController = rememberNavController(),
-                    googleAuthUIClient = googleAuthUIClient)
+                    loginViewModel = viewModel
+                )
             }
         }
     }
