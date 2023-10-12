@@ -19,3 +19,10 @@ object SignUpScreen : TreasureHuntAppDestinations {
 object ProfileScreen : TreasureHuntAppDestinations {
     override val route = "profile"
 }
+object ARScreen : TreasureHuntAppDestinations {
+    override val route = "ar_screen"
+}
+
+object GameModeScreen: TreasureHuntAppDestinations {
+    override val route = "game_mode"
+}

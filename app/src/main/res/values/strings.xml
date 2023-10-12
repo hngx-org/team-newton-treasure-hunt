@@ -2,8 +2,8 @@
     <string name="app_name">TreasureHunt</string>
     <string name="trasure_chest">Treasure Chest</string>
     <string name="slogan">Hide n Seek</string>
-    <string name="web_client_id">1077306219819–233dtv6ur4r8bledd9tvorqbegn3cftu.apps.googleusercontent.com</string>
+    <string name="web_client_id">1077306219819-233dtv6ur4r8bledd9tvorqbegn3cftu.apps.googleusercontent.com</string>
 
-    <string name="sign_in">Sign In</string>
+    <string name="sign_in">Sign In With Google</string>
     <string name="sign_out">Sign Out</string>
 </resources>
