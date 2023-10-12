@@ -60,17 +60,16 @@ fun LoginScreen(
     Scaffold(
         topBar = {
             Text(
+                modifier = modifier.padding(12.dp),
                 text = "Login",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
         },
-        modifier = modifier.background(MaterialTheme.colorScheme.primary),
         content = { scaffoldPadding ->
             Column(
                 modifier = modifier
                     .padding(scaffoldPadding)
-                    .background(MaterialTheme.colorScheme.primary)
                     .padding(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -174,11 +173,13 @@ fun LoginScreen(
         }
     )
 
-    LaunchedEffect(
-        key1 = hasUser,
+   LaunchedEffect(
+        key1 = loginState.isSuccessLogin,
         block = {
+            if (loginState.isSuccessLogin) {
                 onNavigateToGameMode()
-                Log.i("Login","$loginState")
+                Log.i("Login", "$loginState")
+            }
         }
     )
 }

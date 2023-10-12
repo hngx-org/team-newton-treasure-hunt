@@ -61,28 +61,29 @@ fun TreasureHuntAppNavHost(
             }
         ) {
             val context = LocalContext.current
+            val state = loginViewModel.loginState.collectAsState().value
             LoginScreen(
                 updateState = loginViewModel::updateLoginState,
                 onNavigateToGameMode = {
-                    Log.i("NAVHOST", "game")
                     navController.navigate(GameModeScreen.route) {
-                        launchSingleTop = true
-                        popUpTo(route = SignInScreen.route) {
-                            inclusive = true
-                        }
+                        // launchSingleTop = true
+                        //popUpTo(route = SignInScreen.route) {
+                        //   inclusive = true
+                        //}
                     }
-                    //loginViewModel.resetState()
                 },
                 onNavigateToSignUp = {
-                    navController.navigate(SignUpScreen.route){
+                    navController.navigate(SignUpScreen.route) {
                         launchSingleTop = true
                         popUpTo(SignInScreen.route) {
                             inclusive = true
                         }
                     }
                 },
-                logIn = { loginViewModel.loginUser(context) },
-                loginState = loginViewModel.loginState.collectAsState().value,
+                logIn = {
+                    loginViewModel.loginUser(context)
+                },
+                loginState = state,
                 hasUser = loginViewModel.hasUser
             )
 
@@ -131,9 +132,9 @@ fun TreasureHuntAppNavHost(
             }
         ) {
             ProfileViewScreen(
-                loginState = loginViewModel.loginState.collectAsState().value,
                 onSignOut = {
                     loginViewModel.signOut()
+                    loginViewModel.resetState()
                     navController.navigate(SignInScreen.route)
                 }
             )
