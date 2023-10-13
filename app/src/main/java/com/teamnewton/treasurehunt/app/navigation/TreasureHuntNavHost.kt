@@ -107,8 +107,8 @@ fun TreasureHuntAppNavHost(
                 )
             }
         ) {
-            val viewModel = viewModel<LoginViewModel>()
-            val state by viewModel.loginState.collectAsState()
+            //val viewModel = viewModel<LoginViewModel>()
+            val state by loginViewModel.loginState.collectAsState()
             val context = LocalContext.current
 
             SignUpScreen(

@@ -27,7 +27,7 @@ fun GameModeScreen(
     navToPlayerScreen: () -> Unit,
     navToInstructions: () -> Unit,
 ) {
-    LaunchedEffect(key1 = hasUser){
+    LaunchedEffect(key1 = Unit){
         if (!hasUser){
             navToLoginPage.invoke()
         }
