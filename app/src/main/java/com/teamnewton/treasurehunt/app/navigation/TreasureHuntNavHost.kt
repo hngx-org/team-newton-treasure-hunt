@@ -70,10 +70,10 @@ fun TreasureHuntAppNavHost(
                 updateState = loginViewModel::updateLoginState,
                 onNavigateToGameMode = {
                     navController.navigate(GameModeScreen.route) {
-                        // launchSingleTop = true
-                        //popUpTo(route = SignInScreen.route) {
-                        //   inclusive = true
-                        //}
+                        launchSingleTop = true
+                        popUpTo(route = SignInScreen.route) {
+                        inclusive = true
+                        }
                     }
                 },
                 onNavigateToSignUp = {
