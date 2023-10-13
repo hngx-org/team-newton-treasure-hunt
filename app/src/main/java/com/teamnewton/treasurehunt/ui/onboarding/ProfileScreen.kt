@@ -41,12 +41,12 @@ import com.teamnewton.treasurehunt.ui.onboarding.signup.SignInUserData
 fun ProfileViewScreen(
     modifier: Modifier = Modifier,
     onSignOut: () -> Unit,
+    userName: String
 ) {
 
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(R.raw.hand_wave_animation)
     )
-    val firstName = Firebase.auth.currentUser?.displayName?.substringBefore(' ') ?:""
 
 
     Scaffold(
@@ -72,7 +72,7 @@ fun ProfileViewScreen(
                     )
 
                     Text(
-                        text = "Hello, $firstName",
+                        text = "Hello, $userName",
                         textAlign = TextAlign.Center,
                         fontSize = 36.sp,
                         fontWeight = FontWeight.SemiBold,

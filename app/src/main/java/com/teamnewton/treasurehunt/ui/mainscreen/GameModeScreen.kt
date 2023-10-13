@@ -2,7 +2,9 @@ package com.teamnewton.treasurehunt.ui.mainscreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +23,9 @@ fun GameModeScreen(
     onViewProfile: () -> Unit,
     hasUser: Boolean,
     navToLoginPage: () -> Unit,
+    navToAdminScreen: () -> Unit,
+    navToPlayerScreen: () -> Unit,
+    navToInstructions: () -> Unit,
 ) {
     LaunchedEffect(key1 = hasUser){
         if (!hasUser){
@@ -38,16 +43,29 @@ fun GameModeScreen(
                     .padding(contentPadding)
                     .padding(12.dp),
                 content = {
+                    Spacer(modifier = modifier.height(12.dp))
                     Text(text = "Select Player Mode", style = MaterialTheme.typography.headlineMedium)
+                    Spacer(modifier = modifier.height(12.dp))
                     Button(
-                        modifier = modifier.fillMaxWidth().bounceClick(),
-                        onClick = { /*TODO*/ }) {
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .bounceClick(),
+                        onClick = navToAdminScreen) {
                         Text(text = "ADMIN")
                     }
                     Button(
-                        modifier = modifier.fillMaxWidth().bounceClick(),
-                        onClick = { /*TODO*/ }) {
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .bounceClick(),
+                        onClick = navToPlayerScreen) {
                         Text(text = "PLAYER")
+                    }
+                    Button(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .bounceClick(),
+                        onClick = navToInstructions) {
+                        Text(text = "GAME INSTRUCTIONS")
                     }
                 }
             )

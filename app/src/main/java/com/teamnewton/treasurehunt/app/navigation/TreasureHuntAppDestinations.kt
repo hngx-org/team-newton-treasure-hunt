@@ -26,3 +26,11 @@ object ARScreen : TreasureHuntAppDestinations {
 object GameModeScreen: TreasureHuntAppDestinations {
     override val route = "game_mode"
 }
+
+object AdminModeScreen: TreasureHuntAppDestinations {
+    override val route = "admin_mode"
+}
+
+object AdminAddTreasureScreen: TreasureHuntAppDestinations {
+    override val route = "admin_add_treasure"
+}

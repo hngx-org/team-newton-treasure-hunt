@@ -10,4 +10,4 @@ val Purple40 = Color(0xFF4b006e)
 val PurpleGrey40 = Color(0xFFD3B203)
 val Pink40 = Color(0xFF9370DB)
 
-val GradientColors = listOf(Purple40, PurpleGrey40, Pink40)
+val GradientColors = listOf(Purple40, PurpleGrey40, Purple80)
