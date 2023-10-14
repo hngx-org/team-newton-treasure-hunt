@@ -19,5 +19,6 @@ sealed class MainRoutes(val route: String) {
     object AdminModeScreen: MainRoutes("admin_mode")
     object AdminAddTreasureScreen: MainRoutes("admin_add_treasure")
     object AdminViewTreasureScreen: MainRoutes("admin_view_treasure")
+    object AdminMapViewScreen: MainRoutes("admin_map_view_screen")
 
 }
