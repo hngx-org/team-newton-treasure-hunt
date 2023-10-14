@@ -47,7 +47,7 @@ fun GameCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),
         content = {
             Box(
-                modifier = Modifier.height(200.dp),
+                modifier = Modifier.height(200.dp).padding(12.dp),
                 content = {
                     Image(
                         painter = painterResource(id = R.drawable.treasure_box),

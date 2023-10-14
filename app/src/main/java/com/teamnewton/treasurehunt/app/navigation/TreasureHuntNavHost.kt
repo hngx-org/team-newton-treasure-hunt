@@ -3,14 +3,23 @@ package com.teamnewton.treasurehunt.app.navigation
 import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -18,6 +27,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.teamnewton.treasurehunt.ui.admin.addtreasure.AddTreasureHunt
 import com.teamnewton.treasurehunt.ui.admin.treasures.AdminTreasuresScreen
 import com.teamnewton.treasurehunt.ui.admin.addtreasure.AddTreasureViewModel
@@ -27,6 +39,7 @@ import com.teamnewton.treasurehunt.ui.admin.treasuredetail.ViewTreasure
 import com.teamnewton.treasurehunt.ui.admin.treasures.TreasuresViewModel
 import com.teamnewton.treasurehunt.ui.ar.ARScreen
 import com.teamnewton.treasurehunt.ui.mainscreen.GameModeScreen
+import com.teamnewton.treasurehunt.ui.maps.GoogleMapView
 import com.teamnewton.treasurehunt.ui.onboarding.ProfileViewScreen
 import com.teamnewton.treasurehunt.ui.onboarding.SplashScreen
 import com.teamnewton.treasurehunt.ui.onboarding.login.LoginScreen
@@ -180,6 +193,9 @@ fun NavGraphBuilder.onBoardingGraph(
 }
 
 
+val juja = LatLng(1.1018, 37.0144)
+val defaultCameraPosition = CameraPosition.fromLatLngZoom(juja, 4f)
+
 fun NavGraphBuilder.homeGraph(
     navController: NavHostController,
     treasuresViewModel: TreasuresViewModel,
@@ -260,7 +276,7 @@ fun NavGraphBuilder.homeGraph(
 
         composable(
             route = MainRoutes.AdminAddTreasureScreen.route + "?id={id}",
-            arguments = listOf(navArgument("id"){
+            arguments = listOf(navArgument("id") {
                 type = NavType.StringType
                 defaultValue = ""
             }),
@@ -283,11 +299,23 @@ fun NavGraphBuilder.homeGraph(
             LaunchedEffect(key1 = Unit, block = {
                 addTreasureViewModel.getTreasure(gameId)
             })
-            Log.i("TreasureGAMEID",gameId)
+            Log.i("TreasureGAMEID", gameId)
 
             val onBack: () -> Unit = remember {
                 {
                     navController.navigateUp()
+                }
+            }
+            val navToMap: () -> Unit = remember {
+                {
+                    navController.navigate(MainRoutes.AdminMapViewScreen.route)
+                }
+            }
+
+            val saveTreasure: () -> Unit = remember {
+                {
+                    addTreasureViewModel.saveTreasure(gameId)
+                    onBack()
                 }
             }
 
@@ -297,19 +325,16 @@ fun NavGraphBuilder.homeGraph(
                 onBack = onBack,
                 game = state,
                 updateGame = addTreasureViewModel::updateTreasureState,
-                navigateToMap = { },
+                navigateToMap = navToMap,
                 isEdit = gameId.isNotBlank(),
                 isBtnEnabled = addTreasureViewModel.treasureDetail.collectAsState().value.isBtnEnabled,
-                saveTreasure = {
-                    addTreasureViewModel.saveTreasure(gameId)
-                    onBack()
-                }
+                saveTreasure = saveTreasure
             )
         }
 
         composable(
             route = MainRoutes.AdminViewTreasureScreen.route + "?id={id}",
-            arguments = listOf(navArgument("id"){
+            arguments = listOf(navArgument("id") {
                 type = NavType.StringType
                 defaultValue = ""
             }),
@@ -344,12 +369,50 @@ fun NavGraphBuilder.homeGraph(
             ViewTreasure(
                 game = game,
                 onBack = onBack,
-                onEdit = { navController.navigate(MainRoutes.AdminAddTreasureScreen.route+ "?id=$gameId") },
+                onEdit = { navController.navigate(MainRoutes.AdminAddTreasureScreen.route + "?id=$gameId") },
                 onDelete = {
                     treasureDetailViewModel.deleteTreasure(gameId)
                     onBack()
                 }
             )
         }
+
+        composable(
+            route = MainRoutes.AdminMapViewScreen.route,
+        ) {
+            val camPositionState = rememberCameraPositionState {
+                position = defaultCameraPosition
+            }
+
+            val isMapLoaded = remember {
+                mutableStateOf(false)
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                content = {
+                    GoogleMapView(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(450.dp),
+                        cameraPositionState = camPositionState,
+                        onMapLoaded = {
+                            isMapLoaded.value = true
+                        }
+                    )
+
+                    if (!isMapLoaded.value) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .align(Alignment.Center)
+                        )
+                    }
+                }
+            )
+        }
+
     }
 }

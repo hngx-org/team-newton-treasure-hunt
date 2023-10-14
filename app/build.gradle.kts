@@ -1,7 +1,11 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id ("com.google.gms.google-services")
+    id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -23,11 +27,18 @@ android {
     }
 
     buildTypes {
+        debug {
+            val properties = Properties()
+            val fileInputStream = FileInputStream(project.rootProject.file("local.properties"))
+            properties.load(fileInputStream)
+            val mapApiKey = properties.getProperty("MAP_API_KEY")
+            buildConfigField(type = "String", name = "MAP_API_KEY", value = "\"$mapApiKey\"")
+        }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -40,6 +51,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -81,7 +93,6 @@ dependencies {
     //firestore
     implementation ("com.google.firebase:firebase-firestore-ktx: 22.1.2")
 
-    implementation ("com.google.android.gms:play-services-auth:20.7.0")
 
     //Compose Navigation
     implementation("androidx.navigation:navigation-compose:2.7.4")
@@ -94,5 +105,10 @@ dependencies {
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
     implementation ("com.google.android.gms:play-services-maps:18.1.0")
+
+    implementation ("com.google.maps.android:maps-compose:2.15.0")
+    //for Clustering.
+    implementation ("com.google.maps.android:maps-compose-utils:3.1.1")
+
 
 }
