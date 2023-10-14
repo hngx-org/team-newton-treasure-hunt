@@ -6,6 +6,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id ("com.google.gms.google-services")
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    kotlin("kapt")
+    id ("com.google.dagger.hilt.android")
 }
 
 android {
@@ -110,5 +112,14 @@ dependencies {
     //for Clustering.
     implementation ("com.google.maps.android:maps-compose-utils:3.1.1")
 
+    //Accompanist (Permission)
+    implementation ("com.google.accompanist:accompanist-permissions:0.33.0-alpha")
 
+    //Hilt
+    implementation ("com.google.dagger:hilt-android:2.44")
+    kapt ("com.google.dagger:hilt-compiler:2.44")
+
+}
+kapt {
+    correctErrorTypes = true
 }

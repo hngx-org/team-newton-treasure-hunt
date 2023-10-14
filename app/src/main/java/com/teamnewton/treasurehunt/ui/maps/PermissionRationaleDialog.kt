@@ -1,12 +1,9 @@
 package com.teamnewton.treasurehunt.ui.maps
 
-import android.Manifest
-import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.teamnewton.treasurehunt.R
@@ -14,18 +11,17 @@ import com.teamnewton.treasurehunt.R
 @Composable
 fun PermissionRationaleDialog(
     modifier: Modifier = Modifier,
-    isDialogShown: MutableState<Boolean>,
-    activityPermissionResult: ActivityResultLauncher<String>,
-    showMapUI: MutableState<Boolean>
+    onShowDialog: () -> Unit,
+    onConfirm: () -> Unit,
 ) {
     AlertDialog(
         modifier = modifier,
-        onDismissRequest = { isDialogShown.value = false },
+        onDismissRequest = { onShowDialog() },
         confirmButton = {
             Button(
                 onClick = {
-                    isDialogShown.value = false
-                    activityPermissionResult.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    onConfirm()
+                    onShowDialog()
                 },
                 content = {
                     Text(text = stringResource(id = R.string.location_rationale_button_grant))
@@ -41,8 +37,7 @@ fun PermissionRationaleDialog(
         dismissButton = {
             Button(
                 onClick = {
-                    isDialogShown.value = false
-                    showMapUI.value = false
+                  onShowDialog()
                 },
                 content = {
                     Text(text = stringResource(id = R.string.location_rationale_button_deny))

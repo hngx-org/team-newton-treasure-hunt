@@ -25,18 +25,27 @@ val defaultCameraPositionState = CameraPosition.fromLatLngZoom(juja, 4f)
 fun GoogleMapView(
     modifier: Modifier = Modifier,
     cameraPositionState: CameraPositionState,
+    currentPosition: LatLng,
     onMapLoaded: () -> Unit,
 ) {
 
+    val marker = LatLng(currentPosition.latitude, currentPosition.longitude)
+
     val locationState = rememberMarkerState(
-        position = juja
+        position = marker
     )
     val mapUISettings by remember {
         mutableStateOf(MapUiSettings(compassEnabled = false))
     }
 
     val mapProperties by remember {
-        mutableStateOf(MapProperties(mapType = MapType.NORMAL))
+        mutableStateOf(
+            MapProperties(
+                mapType = MapType.NORMAL,
+                isMyLocationEnabled = true,
+                isBuildingEnabled = true
+            )
+        )
     }
 
     var showInfoWindow by remember {
@@ -64,9 +73,8 @@ fun GoogleMapView(
                     showInfoWindow = !showInfoWindow
                     return@Marker false
                 },
-                title = "Map Title"
+                title = "Your Location"
             )
         }
     )
-
 }

@@ -1,25 +1,19 @@
 package com.teamnewton.treasurehunt.app.navigation
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -27,25 +21,23 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.rememberCameraPositionState
+import com.teamnewton.treasurehunt.MainActivityViewModel
 import com.teamnewton.treasurehunt.ui.admin.addtreasure.AddTreasureHunt
-import com.teamnewton.treasurehunt.ui.admin.treasures.AdminTreasuresScreen
 import com.teamnewton.treasurehunt.ui.admin.addtreasure.AddTreasureViewModel
-import com.teamnewton.treasurehunt.app.model.Game
 import com.teamnewton.treasurehunt.ui.admin.treasuredetail.TreasureDetailViewModel
 import com.teamnewton.treasurehunt.ui.admin.treasuredetail.ViewTreasure
+import com.teamnewton.treasurehunt.ui.admin.treasures.AdminTreasuresScreen
 import com.teamnewton.treasurehunt.ui.admin.treasures.TreasuresViewModel
-import com.teamnewton.treasurehunt.ui.ar.ARScreen
 import com.teamnewton.treasurehunt.ui.mainscreen.GameModeScreen
-import com.teamnewton.treasurehunt.ui.maps.GoogleMapView
+import com.teamnewton.treasurehunt.ui.maps.MapsScreen
+import com.teamnewton.treasurehunt.ui.maps.getCityName
 import com.teamnewton.treasurehunt.ui.onboarding.ProfileViewScreen
 import com.teamnewton.treasurehunt.ui.onboarding.SplashScreen
 import com.teamnewton.treasurehunt.ui.onboarding.login.LoginScreen
 import com.teamnewton.treasurehunt.ui.onboarding.login.LoginViewModel
 import com.teamnewton.treasurehunt.ui.onboarding.signup.SignUpScreen
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun TreasureHuntAppNavHost(
     modifier: Modifier = Modifier,
@@ -54,6 +46,7 @@ fun TreasureHuntAppNavHost(
     treasuresViewModel: TreasuresViewModel,
     addTreasureViewModel: AddTreasureViewModel,
     treasureDetailViewModel: TreasureDetailViewModel,
+    mainActivityViewModel: MainActivityViewModel
 ) {
 
     NavHost(
@@ -67,7 +60,8 @@ fun TreasureHuntAppNavHost(
             treasuresViewModel = treasuresViewModel,
             addTreasureViewModel = addTreasureViewModel,
             treasureDetailViewModel = treasureDetailViewModel,
-            loginViewModel = loginViewModel
+            loginViewModel = loginViewModel,
+            mainActivityViewModel = mainActivityViewModel
         )
 
     }
@@ -193,15 +187,14 @@ fun NavGraphBuilder.onBoardingGraph(
 }
 
 
-val juja = LatLng(1.1018, 37.0144)
-val defaultCameraPosition = CameraPosition.fromLatLngZoom(juja, 4f)
-
+@RequiresApi(Build.VERSION_CODES.S)
 fun NavGraphBuilder.homeGraph(
     navController: NavHostController,
     treasuresViewModel: TreasuresViewModel,
     addTreasureViewModel: AddTreasureViewModel,
     treasureDetailViewModel: TreasureDetailViewModel,
     loginViewModel: LoginViewModel,
+    mainActivityViewModel: MainActivityViewModel
 ) {
     navigation(
         startDestination = MainRoutes.GameModeScreen.route,
@@ -320,6 +313,16 @@ fun NavGraphBuilder.homeGraph(
             }
 
             val state by addTreasureViewModel.treasure.collectAsState()
+            val cityName = remember {
+                mutableStateOf("")
+            }
+            LocalContext.current.getCityName(
+                latitude =mainActivityViewModel.mlocation?.latitude ?:0.0,
+                longitude = mainActivityViewModel.mlocation?.longitude ?:0.0
+            ) { address ->
+                cityName.value = address.locality
+                Log.i("CityMAPSSCREEN",cityName.value)
+            }
 
             AddTreasureHunt(
                 onBack = onBack,
@@ -328,7 +331,8 @@ fun NavGraphBuilder.homeGraph(
                 navigateToMap = navToMap,
                 isEdit = gameId.isNotBlank(),
                 isBtnEnabled = addTreasureViewModel.treasureDetail.collectAsState().value.isBtnEnabled,
-                saveTreasure = saveTreasure
+                saveTreasure = saveTreasure,
+                locationName = cityName.value
             )
         }
 
@@ -380,38 +384,11 @@ fun NavGraphBuilder.homeGraph(
         composable(
             route = MainRoutes.AdminMapViewScreen.route,
         ) {
-            val camPositionState = rememberCameraPositionState {
-                position = defaultCameraPosition
-            }
-
-            val isMapLoaded = remember {
-                mutableStateOf(false)
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                content = {
-                    GoogleMapView(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(450.dp),
-                        cameraPositionState = camPositionState,
-                        onMapLoaded = {
-                            isMapLoaded.value = true
-                        }
-                    )
-
-                    if (!isMapLoaded.value) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .align(Alignment.Center)
-                        )
-                    }
-                }
+            MapsScreen(
+                context = LocalContext.current,
+                locationViewModel = mainActivityViewModel
             )
+
         }
 
     }
