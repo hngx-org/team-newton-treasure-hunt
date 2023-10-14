@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,8 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -48,6 +44,7 @@ fun AddTreasureHunt(
     isEdit: Boolean,
     saveTreasure: () -> Unit,
     isBtnEnabled: Boolean,
+    locationName: String,
 ) {
 
     val topText = if (isEdit) "Edit Treasure Hunt" else "Create Treasure Hunt"
@@ -115,29 +112,13 @@ fun AddTreasureHunt(
                                 modifier = modifier.fillMaxWidth()
                             )
 
-                            OutlinedTextField(
-                                value = game.treasureLocationLat.toString(),
-                                onValueChange = { updateGame(game.copy(treasureLocationLat = it.toDouble())) },
-                                label = { Text(text = "Treasure Hunt Lat") },
-                                textStyle = MaterialTheme.typography.bodyMedium,
-                                maxLines = 1,
-                                modifier = modifier.fillMaxWidth()
-                            )
-                            OutlinedTextField(
-                                value = game.treasureLocationLong.toString(),
-                                onValueChange = { updateGame(game.copy(treasureLocationLong = it.toDouble())) },
-                                label = { Text(text = "Treasure Hunt Long") },
-                                textStyle = MaterialTheme.typography.bodyMedium,
-                                maxLines = 1,
-                                modifier = modifier.fillMaxWidth()
-                            )
-
                             TextButton(
                                 onClick = navigateToMap,
                                 content = {
                                     Text(text = "Add Treasure Location", fontSize = 18.sp)
                                 }
                             )
+                            Text(text = "Current Location: ${locationName}", fontSize = 18.sp)
 
                             Spacer(modifier = modifier.height(10.dp))
 
