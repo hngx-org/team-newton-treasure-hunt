@@ -1,4 +1,4 @@
-package com.teamnewton.treasurehunt.ui.admin
+package com.teamnewton.treasurehunt.ui.admin.treasures
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,23 +24,24 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.teamnewton.treasurehunt.R
+import com.teamnewton.treasurehunt.app.model.Game
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameCard(
     modifier: Modifier = Modifier,
     treasure: Game,
-    onTreasureClick: (Game) -> Unit,
+    onTreasureClick: (String) -> Unit,
 ) {
     val onItemClicked = remember {
         {
-            onTreasureClick(treasure)
+            onTreasureClick(treasure.documentId)
         }
     }
 
 
     ElevatedCard(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().padding(12.dp),
         shape = RoundedCornerShape(15.dp),
         onClick = onItemClicked,
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),

@@ -1,6 +1,6 @@
-package com.teamnewton.treasurehunt.ui.admin
+package com.teamnewton.treasurehunt.ui.admin.treasures
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,35 +11,37 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.teamnewton.treasurehunt.R
-import com.teamnewton.treasurehunt.app.theme.Pink40
+import com.teamnewton.treasurehunt.app.model.Game
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdminScreen(
+fun AdminTreasuresScreen(
     modifier: Modifier = Modifier,
     onCreateTreasureHunt: () -> Unit,
-    treasureGames: List<Game>,
-    onGameClick: (Game) -> Unit,
+    treasuresUIState: TreasuresUIState,
+    onGameClick: (String) -> Unit,
     onBack: () -> Unit,
 ) {
 
     Scaffold(
-        modifier = Modifier,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = "Admin Player") },
+                title = { Text(text = "Treasure Hunts") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -68,38 +70,48 @@ fun AdminScreen(
                     .padding(scaffoldPadding)
                     .padding(12.dp)
                     .fillMaxSize(),
+                contentAlignment = Alignment.Center,
                 content = {
-                    if (treasureGames.isEmpty())
-                        EmptyGamesView()
-                    else
-                        AdminGamesList(
-                            games = treasureGames,
-                            onGameClick = onGameClick
-                        )
+
+                            if (treasuresUIState.treasureList.isEmpty())
+                                EmptyGamesView()
+                            else if (treasuresUIState.isLoading)
+                                CircularProgressIndicator()
+                            else if (treasuresUIState.errorMsg != null)
+                                Text(
+                                    text = treasuresUIState.errorMsg,
+                                    color = Color.Red,
+                                    maxLines = 1
+                                )
+                            else
+                                AdminGamesList(
+                                    games = treasuresUIState.treasureList,
+                                    onGameClick = onGameClick
+                                )
+                        }
+                    )
                 }
             )
         }
-    )
-}
 
 
-@Composable
-fun AdminGamesList(
-    modifier: Modifier = Modifier,
-    games: List<Game>,
-    onGameClick: (Game) -> Unit,
-) {
-    LazyVerticalGrid(
-        modifier = modifier,
-        columns = GridCells.Fixed(2),
-        content = {
-            items(games) { game ->
-                GameCard(
-                    treasure = game,
-                    onTreasureClick = onGameClick
-                )
-            }
+        @Composable
+        fun AdminGamesList(
+            modifier: Modifier = Modifier,
+            games: List<Game>,
+            onGameClick: (String) -> Unit,
+        ) {
+            LazyVerticalGrid(
+                modifier = modifier.padding(8.dp),
+                columns = GridCells.Fixed(2),
+                content = {
+                    items(games) { game ->
+                        GameCard(
+                            treasure = game,
+                            onTreasureClick = onGameClick
+                        )
+                    }
+                }
+            )
+
         }
-    )
-
-}

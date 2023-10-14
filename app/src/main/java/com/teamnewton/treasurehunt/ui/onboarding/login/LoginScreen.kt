@@ -132,6 +132,7 @@ fun LoginScreen(
                         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
                         content = {
                             Column(
+                               modifier = modifier.padding(12.dp),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 content = {
