@@ -3,22 +3,14 @@ package com.teamnewton.treasurehunt
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.teamnewton.treasurehunt.ui.ar.ARScreen
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.auth.api.identity.Identity
 import com.teamnewton.treasurehunt.app.navigation.TreasureHuntAppNavHost
 import com.teamnewton.treasurehunt.app.theme.TreasureHuntTheme
+import com.teamnewton.treasurehunt.ui.admin.addtreasure.AddTreasureViewModel
+import com.teamnewton.treasurehunt.ui.admin.treasuredetail.TreasureDetailViewModel
+import com.teamnewton.treasurehunt.ui.admin.treasures.TreasuresViewModel
 import com.teamnewton.treasurehunt.ui.onboarding.login.LoginViewModel
-import com.teamnewton.treasurehunt.ui.onboarding.signup.GoogleAuthUIClient
 
 class MainActivity : ComponentActivity() {
 
@@ -26,10 +18,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TreasureHuntTheme {
-                val viewModel = viewModel<LoginViewModel>()
+                val loginViewModel = viewModel<LoginViewModel>()
+                val addTreasureViewModel = viewModel<AddTreasureViewModel>()
+                val treasureViewModel = viewModel<TreasuresViewModel>()
+                val treasureDetailViewModel = viewModel<TreasureDetailViewModel>()
                 TreasureHuntAppNavHost(
                     navController = rememberNavController(),
-                    loginViewModel = viewModel
+                    loginViewModel = loginViewModel,
+                    addTreasureViewModel = addTreasureViewModel,
+                    treasuresViewModel = treasureViewModel,
+                    treasureDetailViewModel = treasureDetailViewModel
                 )
             }
         }

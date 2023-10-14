@@ -9,12 +9,12 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class AuthRepository {
-    val currentUser: FirebaseUser? = Firebase.auth.currentUser
+    fun currentUser(): FirebaseUser? = Firebase.auth.currentUser
 
     fun hasUser(): Boolean {
         Log.i("AUTH REPO", "${Firebase.auth.currentUser != null}")
         Log.i("AUTH REPO", "${Firebase.auth.currentUser}")
-        return Firebase.auth.currentUser != null
+        return currentUser() != null
     }
 
     fun getUserId(): String = Firebase.auth.currentUser?.uid.orEmpty()

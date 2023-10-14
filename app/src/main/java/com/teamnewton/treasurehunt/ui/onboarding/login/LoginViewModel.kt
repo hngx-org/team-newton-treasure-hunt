@@ -15,7 +15,7 @@ class LoginViewModel(
     private val repository: AuthRepository = AuthRepository()
 ) : ViewModel() {
 
-    val currentUser = repository.currentUser
+    private val currentUser = repository.currentUser()
 
     val hasUser: Boolean = repository.hasUser()
 
@@ -86,7 +86,7 @@ class LoginViewModel(
                     onComplete = { success ->
                         if (success) {
                             Toast.makeText(context, "Successful Login", Toast.LENGTH_SHORT).show()
-                            _loginUiState.update { it.copy(isSuccessLogin = true) }
+                            _loginUiState.update { it.copy(isSuccessLogin = true, firstName = currentUser?.displayName ?:"") }
                         } else {
                             Toast.makeText(context, "Failed Login", Toast.LENGTH_SHORT).show()
                             _loginUiState.update { it.copy(isSuccessLogin = false) }

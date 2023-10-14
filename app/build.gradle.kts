@@ -74,7 +74,13 @@ dependencies {
 
     //Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+
+    //firebase Auth
     implementation ("com.google.firebase:firebase-auth-ktx:22.1.2")
+
+    //firestore
+    implementation ("com.google.firebase:firebase-firestore-ktx: 22.1.2")
+
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
 
     //Compose Navigation

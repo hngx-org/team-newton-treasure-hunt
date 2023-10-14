@@ -1,28 +1,23 @@
 package com.teamnewton.treasurehunt.app.navigation
 
-interface TreasureHuntAppDestinations {
-    val route: String
+sealed class NestedRoutes(val route: String) {
+    object OnBoardingRoutes: NestedRoutes("onboard")
+    object MainRoutes: NestedRoutes("main")
 }
 
-object SplashScreen : TreasureHuntAppDestinations {
-    override val route = "splash"
+sealed class OnBoardingRoutes(val route: String) {
+    object SplashScreen: OnBoardingRoutes("splash")
+    object SignInScreen: OnBoardingRoutes("sign_in")
+    object SignUpScreen: OnBoardingRoutes("sign_up")
+
+    object ProfileScreen: OnBoardingRoutes("profile")
+
 }
 
-object SignInScreen : TreasureHuntAppDestinations {
-    override val route = "sign_in"
-}
+sealed class MainRoutes(val route: String) {
+    object GameModeScreen: MainRoutes("game_mode")
+    object AdminModeScreen: MainRoutes("admin_mode")
+    object AdminAddTreasureScreen: MainRoutes("admin_add_treasure")
+    object AdminViewTreasureScreen: MainRoutes("admin_view_treasure")
 
-object SignUpScreen : TreasureHuntAppDestinations {
-    override val route = "sign_up"
-}
-
-object ProfileScreen : TreasureHuntAppDestinations {
-    override val route = "profile"
-}
-object ARScreen : TreasureHuntAppDestinations {
-    override val route = "ar_screen"
-}
-
-object GameModeScreen: TreasureHuntAppDestinations {
-    override val route = "game_mode"
 }

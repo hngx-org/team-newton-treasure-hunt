@@ -212,7 +212,7 @@ fun SignUpScreen(
         }
     )
 
-    LaunchedEffect(
+   LaunchedEffect(
         key1 = hasUser,
         block = {
             if (hasUser) {
